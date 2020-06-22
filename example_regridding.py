@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import xarray as xr
 import xesmf as xe
+import salem
 
-with xr.open_dataset('/path/file.nc') as ds:
-    variable = ds['variable']
+with salem.xr.open_dataset('/path/wrf.nc') as ds:
+    wrf = ds['variable']
     
 global_grid = xr.Dataset(
     {'lat': (['lat'], np.arange(-60, 85, 0.0416667)), 
@@ -11,11 +12,12 @@ global_grid = xr.Dataset(
 )
 
 regridder = xe.Regridder(
-	variable, 
-	global_grid, 
-	'bilinear', 
-	reuse_weights=True
+    wrf, 
+    global_grid, 
+    'bilinear', 
+    reuse_weights=True
 )
 
-variable_regridded = regridder(variable)
+wrf_regridded = regridder(wrf)
+
 regridder.clean_weight_file()
