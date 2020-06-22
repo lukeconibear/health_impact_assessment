@@ -21,5 +21,5 @@ ds['china'] = ds.china.where(cond=ds.china!=0, other=1)
 
 # example: scale data inside shapefile by 0.5
 # if condition (not in china) preserve, otherwise (in china, and scale)
-ds = ds.where(cond=ds.china!=1, other=ds * 0.5) 
+ds = ds.where(cond=ds.china!=1, other=ds*0.5) 
 
