@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-exec(open('/nobackup/earlacoa/python/modules_python3.py').read())
+import numpy as np
+import xarray as xr
+import pandas as pd
+from import_npz import import_npz
+from find_nearest import find_nearest
+#from calc_hia_gemm_ncdlri import calc_hia_gemm_ncdlri
+from calc_hia_gemm_ncdlri_numba import dict_to_typed_dict, load_bm_per_outcome, outcome_per_age, outcome_total, dalys_age, dalys_total, rates_total
+from shapefile_hia import shapefile_hia
 
 # --- load data ---
 

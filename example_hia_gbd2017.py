@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+import numpy as np
 import xarray as xr
+import pandas as pd
 from import_npz import import_npz
 from find_nearest import find_nearest
 from calc_hia_gbd2017_pm25 import calc_hia_gbd2017_pm25, calc_rr_gbd2017_pm25

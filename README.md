@@ -14,5 +14,5 @@
 ##### Examples
 - Regridding to a global grid (`example_regridding.py`).  
 - Application of cutting an array by a shapefile (`example_crop_array_to_shapefile.py`).  
-- Health impact assessment for long-term PM<sub>2.5<\sub> and O<sub>3<\sub> exposures using GBD2017 exposure-outcome associations (`example_hia_gbd2017.py`).
-- Health impact assessment for long-term PM<sub>2.5<\sub> exposure using the GEMM NCD+LRI exposure-outcome associations (`example_hia_gbd2017.py`).    
+- Health impact assessment for long-term PM<sub>2.5<\sub> and O<sub>3<\sub> exposures using GBD2017 exposure-outcome associations (`example_hia_gbd2017.py`).  
+- Health impact assessment for long-term PM<sub>2.5<\sub> exposure using the GEMM NCD+LRI exposure-outcome associations (`example_hia_gbd2017.py`).   
