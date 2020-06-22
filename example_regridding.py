@@ -18,5 +18,4 @@ regridder = xe.Regridder(
 )
 
 variable_regridded = regridder(variable)
-
 regridder.clean_weight_file()
