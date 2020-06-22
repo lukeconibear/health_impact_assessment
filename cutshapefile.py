@@ -56,3 +56,4 @@ def rasterize(shapes, coords, latitude='latitude', longitude='longitude', fill=n
 	)
     spatial_coords = {latitude: coords[latitude], longitude: coords[longitude]}
     return xr.DataArray(raster, coords=spatial_coords, dims=(latitude, longitude))
+
