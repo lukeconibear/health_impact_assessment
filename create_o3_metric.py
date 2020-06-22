@@ -25,4 +25,3 @@ def create_ozone_metric(o3_annual):
 	o3_6mDM8h = o3_6mDM8h_6monthmean.max(dim='time')
 
 	return o3_6mDM8h
-
