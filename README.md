@@ -1,4 +1,4 @@
-#### Code for health impact assessments
+#### Code for health impact assessments from air pollution exposure
 ##### Functions
 - Import numpy arrays (`import_npz.py`).  
 - Find index within array nearest to a given value (`find_nearest.py`).  
