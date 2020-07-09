@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Create daily mean surface ambient PM2.5 concentrations from raw WRFChem wrfout files
-Regrid to a global regrid
+Regrid to a global grid
 """
 import glob
 import numpy as np
