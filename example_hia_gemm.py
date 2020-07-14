@@ -10,16 +10,26 @@ from shapefile_hia import shapefile_hia
 
 # --- load data ---
 
-# population count and age
+# population count
 import_npz('path/population-count-0.25deg.npz', globals())
 
-# baseline mortality
+# population age
 with np.load(data_path + 'GBD2017_population_age_fraction_global_2015_array_0.25deg.npz') as file_age:
     dict_ages = dict(zip([key for key in file_age], 
                          [file_age[key].astype('float32') for key in file_age]))
 
 typed_dict_ages = dict_to_typed_dict(dict_ages)
 del dict_ages
+
+# baseline mortality
+file_bm_list = []
+for disease in ['ncd', 'lri']:
+    file_bm_list.extend(glob.glob(data_path + 'GBD2017_baseline_mortality*' + disease + '*0.25deg.npz'))
+dict_bm = {}
+for file_bm_each in file_bm_list:
+    file_bm = np.load(file_bm_each)
+    dict_bm_each = dict(zip([key for key in file_bm], [file_bm[key].astype('float32') for key in file_bm]))
+    dict_bm.update(dict_bm_each)
 
 # exposure-outcome association
 with np.load(data_path + 'GEMM_healthfunction_part1.npz') as file_gemm_1:
