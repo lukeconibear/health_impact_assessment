@@ -6,8 +6,10 @@
 - GEMM NCD+LRI for long-term PM2.5 exposure (`calc_hia_gemm_ncdlri.py`).  
     - Variant using Numba (`calc_hia_gemm_ncdlri_numba.py`).  
 - GEMM 5COD for long-term PM2.5 exposure (`calc_hia_gemm_5cod.py`).  
-- GBD2017 for long-term PM2.5 exposure (`calc_hia_gbd2017_pm25.py`).  
-- GBD2017 for long-term O3 exposure (`calc_hia_gbd2017_o3.py`).  
+- GBD2017/2019 for long-term PM2.5 exposure (`calc_hia_gbd2017_pm25.py`, `calc_hia_gbd2019_pm25.py`).  
+- GBD2017/2019 for long-term O3 exposure (`calc_hia_gbd2017_o3.py`, `calc_hia_gbd2019_o3.py`).  
+- Create global arrays of GBD2019 baseline mortality and population age (`create_arrays_gbd2019_baseline_mortality_population.py/bash`).  
+- Test calculation for GBD2019 (`hia_gbd2019.py/bash`).  
 - Cut an array by a shapefile (`cutshapefile.py`).  
 - Cut the health impact assessment arrays by shapefiles (`shapefile_hia.py`).  
 
