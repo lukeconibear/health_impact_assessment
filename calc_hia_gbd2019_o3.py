@@ -12,10 +12,9 @@ def calc_hia_gbd2019_o3(o3, pop_z_2015, dict_ages, dict_bm, dict_o3):
     """ estimated for all ages individually """
     """ call example: calc_hia_gbd2019_o3(o3_ctl, pop_z_2015, dict_ages, dict_bm, dict_o3) """
     # inputs
-    ages = ['25_29', '30_34', '35_39', '40_44', '45_49', '50_54', '55_59', '60_64',
-            '65_69', '70_74', '75_79', '80up']
-    outcomes = ['mort', 'yll', 'yld']
-    metrics = ['mean', 'upper', 'lower']
+    ages = ['25_29', '30_34', '35_39', '40_44', '45_49', '50_54', '55_59', '60_64', '65_69', '70_74', '75_79', '80up']
+    measures = ['mort', 'yll', 'yld']
+    uncertainties = ['mean', 'upper', 'lower']
     # health impact assessment
     hia_o3 = {}
     hia_o3.update({'pop' : pop_z_2015})
@@ -23,39 +22,53 @@ def calc_hia_gbd2019_o3(o3, pop_z_2015, dict_ages, dict_bm, dict_o3):
 
     # attributable fraction
     dict_af = {}
-    for metric in metrics:
-        dict_af.update({ metric : np.array([[dict_o3['af_o3_copd_' + metric][find_nearest(dict_o3['o3_conc'], o3[lat][lon])] for lon in range(o3.shape[1])] for lat in range(o3.shape[0])]) })
+    for uncertainty in uncertainties:
+        dict_af.update({
+            uncertainty:
+            np.array([[dict_o3['af_o3_copd_' + uncertainty][find_nearest(dict_o3['o3_conc'], o3[lat][lon])]
+            for lon in range(o3.shape[1])] for lat in range(o3.shape[0])])
+        })
 
-    for outcome in outcomes:
-        for metric in metrics:
+    for measure in measures:
+        for uncertainty in uncertainties:
             for age in ages:
                 # mort, yll, yld - age
-                hia_o3.update({ outcome + '_copd_' + metric + '_' + age :
-                                 pop_z_2015 * dict_ages['cf_age_fraction_' + age + '_grid']
-                                 * dict_bm['i_' + outcome + '_copd_both_' + metric + '_' + age]
-                                 * dict_af[metric] })
+                hia_o3.update({
+                    measure + '_copd_' + uncertainty + '_' + age:
+                    pop_z_2015 * dict_ages['age_fraction_' + uncertainty + '_' + age + '_both']
+                    * dict_bm['i_' + measure + '_copd_both_' + uncertainty + '_' + age]
+                    * dict_af[uncertainty]
+                })
 
             # mort, yll, yld - total
-            hia_o3.update({ outcome + '_copd_' + metric + '_total' :
-                             sum([value for key, value in hia_o3.items()
-                                  if outcome + '_copd_' + metric in key]) })
+            hia_o3.update({
+                measure + '_copd_' + uncertainty + '_total':
+                sum([value for key, value in hia_o3.items()
+                if measure + '_copd_' + uncertainty in key])
+            })
 
     # dalys - age
-    for metric in metrics:
+    for uncertainty in uncertainties:
         for age in ages:
-            hia_o3.update({ 'dalys_copd_' + metric + '_' + age :
-                             hia_o3['yll_copd_' + metric + '_' + age]
-                             + hia_o3['yld_copd_' + metric + '_' + age] })
+            hia_o3.update({
+                'dalys_copd_' + uncertainty + '_' + age:
+                hia_o3['yll_copd_' + uncertainty + '_' + age] + hia_o3['yld_copd_' + uncertainty + '_' + age]
+            })
+
         # dalys - total
-        hia_o3.update({ 'dalys_copd_' + metric + '_total' :
-                         sum([value for key, value in hia_o3.items()
-                              if 'dalys_copd_' + metric in key]) })
+        hia_o3.update({
+            'dalys_copd_' + uncertainty + '_total':
+            sum([value for key, value in hia_o3.items()
+            if 'dalys_copd_' + uncertainty in key])
+        })
 
     # rates - total
-    for outcome in ['mort', 'yll', 'yld', 'dalys']:
-        for metric in metrics:
-            hia_o3.update({ outcome + '_rate_copd_' + metric + '_total' :
-                             hia_o3[outcome + '_copd_' + metric + '_total']
-                             * ( 100000 / pop_z_2015) })
+    for measure in ['mort', 'yll', 'yld', 'dalys']:
+        for uncertainty in uncertainties:
+            hia_o3.update({
+                measure + '_rate_copd_' + uncertainty + '_total':
+                hia_o3[measure + '_copd_' + uncertainty + '_total'] * ( 100000 / pop_z_2015)
+            })
 
     return hia_o3
+

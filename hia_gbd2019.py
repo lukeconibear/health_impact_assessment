@@ -21,6 +21,8 @@ with xr.open_dataset(f'{data_path}GBD2017_O3_global_0.25deg_crop.nc') as ds:
 xx, yy = np.meshgrid(lon, lat)
 
 # health impact assessment
+sim = 'control'
+
 dict_rr_pm25 = calc_rr_gbd2019_pm25(pm25, dict_pm25)
 
 hia_pm25 = calc_hia_gbd2019_pm25(pm25, dict_rr_pm25, pop_z_2015, dict_ages, dict_bm, dict_pm25)
