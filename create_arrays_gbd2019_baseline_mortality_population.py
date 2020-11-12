@@ -34,7 +34,6 @@ country_names.remove(u'\xc5land')
 country_names.remove('Anguilla')
 country_names.remove('Antarctica')
 country_names.remove('Aruba')
-country_names = [country.replace('Bahamas', 'The Bahamas') for country in country_names]
 country_names.remove('Bonaire, Saint Eustatius and Saba')
 country_names.remove('Bouvet Island')
 country_names.remove('British Indian Ocean Territory')
@@ -113,8 +112,6 @@ df_shape_id.replace({"Anguilla": "Caribbean"}, inplace=True)
 df_shape_array.replace({"Anguilla": "Caribbean"}, inplace=True)
 df_shape_id.replace({"Aruba": "Caribbean"}, inplace=True)
 df_shape_array.replace({"Aruba": "Caribbean"}, inplace=True)
-df_shape_id.replace({"Bahamas": "The Bahamas"}, inplace=True)
-df_shape_array.replace({"Bahamas": "The Bahamas"}, inplace=True)
 df_shape_id.replace({"Bonaire, Saint Eustatius and Saba": "Caribbean"}, inplace=True)
 df_shape_array.replace({"Bonaire, Saint Eustatius and Saba": "Caribbean"}, inplace=True)
 df_shape_id.replace({"Bouvet Island": "Norway"}, inplace=True)
@@ -228,9 +225,28 @@ if process_population:
 
     df_pop = pd.read_csv(f'{data_path}/GBD2019_pop_{year}.csv')
 
-    df_pop.replace({"Cote d'Ivoire": "Ivory Coast"}, inplace=True)
     df_pop.replace({"Russian Federation": "Russia"}, inplace=True)
     df_pop.replace({"Congo": "Congo"}, inplace=True)
+    df_pop.replace({"Taiwan (Province of China)": "Taiwan"}, inplace=True)
+    df_pop.replace({"Bolivia (Plurinational State of)": "Bolivia"}, inplace=True)
+    df_pop.replace({"Brunei Darussalam": "Brunei"}, inplace=True)
+    df_pop.replace({"Cabo Verde": "Cape Verde"}, inplace=True)
+    df_pop.replace({"Côte d'Ivoire": "Ivory Coast"}, inplace=True)
+    df_pop.replace({"Czechia": "Czech Republic"}, inplace=True)
+    df_pop.replace({"Iran (Islamic Republic of)": "Iran"}, inplace=True)
+    df_pop.replace({"North Macedonia": "Macedonia"}, inplace=True)
+    df_pop.replace({"Republic of Moldova": "Moldova"}, inplace=True)
+    df_pop.replace({"Democratic People's Republic of Korea": "North Korea"}, inplace=True)
+    df_pop.replace({"Republic of Korea": "South Korea"}, inplace=True)
+    df_pop.replace({"Russian Federation": "Russia"}, inplace=True)
+    df_pop.replace({"Syrian Arab Republic": "Syria"}, inplace=True)
+    df_pop.replace({"United Republic of Tanzania": "Tanzania"}, inplace=True)
+    df_pop.replace({"Venezuela (Bolivarian Republic of)": "Venezuela"}, inplace=True)
+    df_pop.replace({"Viet Nam": "Vietnam"}, inplace=True)
+    df_pop.replace({"United States Virgin Islands": "Virgin Islands, U.S."}, inplace=True)
+    df_pop.replace({"Lao People's Democratic Republic": "Laos"}, inplace=True)
+    df_pop.replace({"Eswatini": "Swaziland"}, inplace=True)
+    df_pop.replace({"United States of America": "United States"}, inplace=True)
     df_pop = df_pop[df_pop.location_id != 533] # Remove the US state of Georgia as interfering with the country Georgia
 
     for uncertainty in uncertainties:
@@ -244,27 +260,26 @@ if process_population:
                     result_age = df_pop.loc[df_pop['location_name'] == country_name].loc[df_pop['age_group_id'] == age_id].loc[df_pop['year_id'] == year].loc[df_pop['sex_id'] == sex_id]['val']
                     result_all = df_pop.loc[df_pop['location_name'] == country_name].loc[df_pop['age_group_id'] == 22].loc[df_pop['year_id'] == year].loc[df_pop['sex_id'] == sex_id]['val']
 
-                    if result_age.size > 0: # only if have results for this country
-                        df_shape_array.loc[df_shape_array['country_name'] == country_name, population_variable] = float(result_age) / float(result_all)
+                    df_shape_array.loc[df_shape_array['country_name'] == country_name, population_variable] = float(result_age) / float(result_all)
 
-                        pop_data = {}
-                        for index, column in enumerate(df_shape_array.columns[:]):
-                            pop_data[column] = df_shape_array[df_shape_array.columns[index]].values
+                    pop_data = {}
+                    for index, column in enumerate(df_shape_array.columns[:]):
+                        pop_data[column] = df_shape_array[df_shape_array.columns[index]].values
 
-                        # create 2d array from 3 1d columns of lon, lat and data (fill with nan and then the data)
-                        pop_lat_vals, pop_lat_idx = np.unique(pop_data['lat'], return_inverse=True)
-                        pop_lon_vals, pop_lon_idx = np.unique(pop_data['lon'], return_inverse=True)
-                        pop_array = np.empty(pop_lat_vals.shape + pop_lon_vals.shape)
-                        pop_array.fill(np.nan)
-                        pop_array[pop_lat_idx, pop_lon_idx] = pop_data[population_variable]
-                        ds_population[population_variable] = xr.DataArray(
-                            pop_array,
-                            dims=('lat', 'lon'),
-                            coords={
-                                'lat': pop_lat_vals,
-                                'lon': pop_lon_vals
-                            }
-                        )
+                    # create 2d array from 3 1d columns of lon, lat and data (fill with nan and then the data)
+                    pop_lat_vals, pop_lat_idx = np.unique(pop_data['lat'], return_inverse=True)
+                    pop_lon_vals, pop_lon_idx = np.unique(pop_data['lon'], return_inverse=True)
+                    pop_array = np.empty(pop_lat_vals.shape + pop_lon_vals.shape)
+                    pop_array.fill(np.nan)
+                    pop_array[pop_lat_idx, pop_lon_idx] = pop_data[population_variable]
+                    ds_population[population_variable] = xr.DataArray(
+                        pop_array,
+                        dims=('lat', 'lon'),
+                        coords={
+                            'lat': pop_lat_vals,
+                            'lon': pop_lon_vals
+                        }
+                    )
 
 
     ds_population.to_netcdf(f'{data_path}/GBD2019_population_{year}_{res}deg.nc')
@@ -273,9 +288,28 @@ if process_baseline_mortality:
     for measure, measure_id in measures.items():
         df_bm = pd.read_csv(f'{data_path}/GBD2019_BM_{year}_countries_cause_{measure.upper()}_rate_LRI-LC-COPD-IHD-DIAB-STR-NCD-ALL-CATA.csv')
 
-        df_bm.replace({"Cote d'Ivoire": "Ivory Coast"}, inplace=True)
         df_bm.replace({"Russian Federation": "Russia"}, inplace=True)
         df_bm.replace({"Congo": "Congo"}, inplace=True)
+        df_bm.replace({"Taiwan (Province of China)": "Taiwan"}, inplace=True)
+        df_bm.replace({"Bolivia (Plurinational State of)": "Bolivia"}, inplace=True)
+        df_bm.replace({"Brunei Darussalam": "Brunei"}, inplace=True)
+        df_bm.replace({"Cabo Verde": "Cape Verde"}, inplace=True)
+        df_bm.replace({"Côte d'Ivoire": "Ivory Coast"}, inplace=True)
+        df_bm.replace({"Czechia": "Czech Republic"}, inplace=True)
+        df_bm.replace({"Iran (Islamic Republic of)": "Iran"}, inplace=True)
+        df_bm.replace({"North Macedonia": "Macedonia"}, inplace=True)
+        df_bm.replace({"Republic of Moldova": "Moldova"}, inplace=True)
+        df_bm.replace({"Democratic People's Republic of Korea": "North Korea"}, inplace=True)
+        df_bm.replace({"Republic of Korea": "South Korea"}, inplace=True)
+        df_bm.replace({"Russian Federation": "Russia"}, inplace=True)
+        df_bm.replace({"Syrian Arab Republic": "Syria"}, inplace=True)
+        df_bm.replace({"United Republic of Tanzania": "Tanzania"}, inplace=True)
+        df_bm.replace({"Venezuela (Bolivarian Republic of)": "Venezuela"}, inplace=True)
+        df_bm.replace({"Viet Nam": "Vietnam"}, inplace=True)
+        df_bm.replace({"United States Virgin Islands": "Virgin Islands, U.S."}, inplace=True)
+        df_bm.replace({"Lao People's Democratic Republic": "Laos"}, inplace=True)
+        df_bm.replace({"Eswatini": "Swaziland"}, inplace=True)
+        df_bm.replace({"United States of America": "United States"}, inplace=True)
         df_bm = df_bm.loc[df_bm.location_id != 533] # Remove the US state of Georgia as interfering with the country Georgia
 
         for cause, cause_id in causes.items():
@@ -298,27 +332,26 @@ if process_baseline_mortality:
                             print(f'{country_name}')
                             result = df_bm.loc[df_bm['location_name'] == country_name].loc[df_bm['measure_id'] == measure_id].loc[df_bm['sex_id'] == sex_id].loc[df_bm['age_id'] == age_id].loc[df_bm['cause_id'] == cause_id].loc[df_bm['year'] == year]['val']
 
-                            if result.size > 0: # only if have results for this country
-                                df_shape_array.loc[df_shape_array['country_name'] == country_name, baseline_mortality_variable] = float(result) / 100000
+                            df_shape_array.loc[df_shape_array['country_name'] == country_name, baseline_mortality_variable] = float(result) / 100000
 
-                                bm_data = {}
-                                for index, column in enumerate(df_shape_array.columns[:]):
-                                    bm_data[column] = df_shape_array[df_shape_array.columns[index]].values
+                            bm_data = {}
+                            for index, column in enumerate(df_shape_array.columns[:]):
+                                bm_data[column] = df_shape_array[df_shape_array.columns[index]].values
 
-                                # create 2d array from 3 1d columns of lon, lat and data (fill with nan and then the data)
-                                bm_lat_vals, bm_lat_idx = np.unique(bm_data['lat'], return_inverse=True)
-                                bm_lon_vals, bm_lon_idx = np.unique(bm_data['lon'], return_inverse=True)
-                                bm_array = np.empty(bm_lat_vals.shape + bm_lon_vals.shape)
-                                bm_array.fill(np.nan)
-                                bm_array[bm_lat_idx, bm_lon_idx] = bm_data[baseline_mortality_variable]
-                                ds_baseline_mortality[baseline_mortality_variable] = xr.DataArray(
-                                    bm_array,
-                                    dims=('lat', 'lon'),
-                                    coords={
-                                        'lat': bm_lat_vals,
-                                        'lon': bm_lon_vals
-                                    }
-                                )
+                            # create 2d array from 3 1d columns of lon, lat and data (fill with nan and then the data)
+                            bm_lat_vals, bm_lat_idx = np.unique(bm_data['lat'], return_inverse=True)
+                            bm_lon_vals, bm_lon_idx = np.unique(bm_data['lon'], return_inverse=True)
+                            bm_array = np.empty(bm_lat_vals.shape + bm_lon_vals.shape)
+                            bm_array.fill(np.nan)
+                            bm_array[bm_lat_idx, bm_lon_idx] = bm_data[baseline_mortality_variable]
+                            ds_baseline_mortality[baseline_mortality_variable] = xr.DataArray(
+                                bm_array,
+                                dims=('lat', 'lon'),
+                                coords={
+                                    'lat': bm_lat_vals,
+                                    'lon': bm_lon_vals
+                                }
+                            )
 
                     ds_baseline_mortality.to_netcdf(f'{data_path}/GBD2019_baseline_mortality_{measure}_{cause}_{sex}_{uncertainty}_{year}_{res}deg.nc') # for all ages and countries
 
