@@ -9,13 +9,14 @@ import pandas as pd
 import_npz('path/population-count-0.25deg.npz', globals())
 
 # baseline mortality
-df_baseline_mortality = pd.read_csv('path/GBD2017_baseline_mortality_2017_global_all-cause_deaths_rateper100000.csv')
+path = '/nfs/a68/earlacoa/health/GBD2017/'
+df_bm = pd.read_csv(f'{path}/GBD2017_BM_2015_countries_cause_deaths-DALYS-YLL-YLD_rateper100000_LRI-LC-COPD-IHD-DIAB-STR-NCD-ALL-CATA.csv')
 location = 163
-baseline_mortality_annual = float(df_bm.loc[df_bm['location_id'] == location][df_bm['year'] == 2016][df_bm['age_id'] == 22][df_bm['cause_id'] == 294]['val']) / 100000
+baseline_mortality_annual = float(df_bm.loc[df_bm['location_id'] == location][df_bm['year'] == 2015][df_bm['age_id'] == 22][df_bm['cause_id'] == 294][df_bm['measure_id'] == 1][df_bm['sex_id'] == 3]['val']) / 100000
 baseline_mortality_daily = baseline_mortality_annual / 365.25
 
 # short-term ambient PM2.5 exposure
-with xr.open_dataset('path/ambient_pm25_o3.nc') as ds:
+with xr.open_dataset(f'{path}/ambient_pm25_o3.nc') as ds:
     ambient_pm25 = ds['PM2_5_DRY'].values
     lon = ds['longitude'].values
     lat = ds['latitude'].values
