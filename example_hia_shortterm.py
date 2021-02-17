@@ -8,7 +8,9 @@ path = '/data'
 
 # population count 
 # global data as a xarray dataset following: create_population_data.ipynb
-population_count = xr.open_dataset(f'{path}/gpw_v4_population_count_rev11_2020_0.25deg_crop.nc')
+with xr.open_dataset(f'{path}/gpw_v4_population_count_rev11_2020_0.25deg_crop.nc') as ds:
+    population_count = ds['pop']
+    
 # or could use the numpy array version instead
 # import_npz('path/population-count-0.25deg.npz', globals())
 
@@ -21,8 +23,18 @@ baseline_mortality_daily = baseline_mortality_annual / 365.25
 # short-term ambient PM2.5 exposure
 # regridded to global grid using: example_regridding.py
 with xr.open_dataset(f'{path}/ambient_pm25_o3.nc') as ds:
+    # pm25
+    # uses hourly data
+    # no lower concentration cutoff (lcc) = 0 ug/m3 (i.e. none)
     ambient_pm25 = ds['PM2_5_DRY'].values
-    ambient_o3 = ds['o3'].values
+    
+    # o3
+    # uses daily-maximum, 8-hourly-mean exposures
+    # uses lower concentration cutoff (lcc) = 10 ppb
+    ambient_o3 = ds['o3']
+    ambient_o3 = ambient_o3.resample(time='8H').mean().resample(time='24H').max()
+    ambient_o3 = ambient_o3.where(cond=ambient_o3 > 10, other=0.0).values
+    
     lon = ds['longitude'].values
     lat = ds['latitude'].values
 
@@ -35,8 +47,6 @@ xx, yy = np.meshgrid(lon, lat)
 pm25_percentage_risk_per10_mean  = 0.68
 pm25_percentage_risk_per10_lower = 0.59
 pm25_percentage_risk_per10_upper = 0.77
-# uses hourly data
-# no lower concentration cutoff (lcc) = 0 ug/m3 (i.e. none)
 
 # exposure-outcome association - o3
 # Héroux et al., (2015) IJPH, https://link.springer.com/article/10.1007/s00038-015-0690-y
@@ -45,10 +55,6 @@ pm25_percentage_risk_per10_upper = 0.77
 o3_percentage_risk_per10_mean  = 0.29
 o3_percentage_risk_per10_lower = 0.14
 o3_percentage_risk_per10_upper = 0.43
-# uses daily-maximum, 8-hourly-mean exposures
-ambient_o3 = ambient_o3.resample(time='8H').mean().resample(time='24H').max()
-# lower concentration cutoff (lcc) = 10 ppb
-ambient_o3 = ambient_o3.where(cond=ambient_o3 > 10, other=0.0)
 
 # --- health impact assessment ---
 # daily mean mortality, all-cause, all ages
