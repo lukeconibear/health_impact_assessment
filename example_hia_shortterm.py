@@ -48,7 +48,7 @@ o3_percentage_risk_per10_upper = 0.43
 # uses daily-maximum, 8-hourly-mean exposures
 ambient_o3 = ambient_o3.resample(time='8H').mean().resample(time='24H').max()
 # lower concentration cutoff (lcc) = 10 ppb
-ambient_o3 = ambient_o3.where(cond=pm25 > 10, other=0.0)
+ambient_o3 = ambient_o3.where(cond=ambient_o3 > 10, other=0.0)
 
 # --- health impact assessment ---
 # daily mean mortality, all-cause, all ages
