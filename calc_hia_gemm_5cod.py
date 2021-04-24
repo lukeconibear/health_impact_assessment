@@ -24,13 +24,13 @@ def calc_hia_gemm_5cod(pm25, pop_z_2015, dict_ages, dict_bm, dict_gemm):
     for cause in causes:
         for outcome in outcomes:
             for metric in metrics:
-                if metric == 'mean':
-                    theta = dict_gemm['gemm_health_' + cause + '_theta_' + age]
-                elif metric == 'lower':
-                    theta = dict_gemm['gemm_health_' + cause + '_theta_' + age] - dict_gemm['gemm_health_' + cause + '_theta_error_' + age]
-                elif metric == 'upper':
-                    theta = dict_gemm['gemm_health_' + cause + '_theta_' + age] + dict_gemm['gemm_health_' + cause + '_theta_error_' + age]
                 for age in ages:
+                    if metric == 'mean':
+                        theta = dict_gemm['gemm_health_' + cause + '_theta_' + age]
+                    elif metric == 'lower':
+                        theta = dict_gemm['gemm_health_' + cause + '_theta_' + age] - dict_gemm['gemm_health_' + cause + '_theta_error_' + age]
+                    elif metric == 'upper':
+                        theta = dict_gemm['gemm_health_' + cause + '_theta_' + age] + dict_gemm['gemm_health_' + cause + '_theta_error_' + age]
                     # mort, yll, yld - age
                     hia_5cod.update({ outcome + '_' + cause + '_' + metric + '_' + age :
                                      pop_z_2015 * dict_ages['cf_age_fraction_' + age + '_grid']
