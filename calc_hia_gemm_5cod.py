@@ -24,17 +24,23 @@ def calc_hia_gemm_5cod(pm25, pop_z_2015, dict_ages, dict_bm, dict_gemm):
     for cause in causes:
         for outcome in outcomes:
             for metric in metrics:
+                if metric == 'mean':
+                    theta = dict_gemm['gemm_health_' + cause + '_theta_' + age]
+                elif metric == 'lower':
+                    theta = dict_gemm['gemm_health_' + cause + '_theta_' + age] - dict_gemm['gemm_health_' + cause + '_theta_error_' + age]
+                elif metric == 'upper':
+                    theta = dict_gemm['gemm_health_' + cause + '_theta_' + age] + dict_gemm['gemm_health_' + cause + '_theta_error_' + age]
                 for age in ages:
                     # mort, yll, yld - age
                     hia_5cod.update({ outcome + '_' + cause + '_' + metric + '_' + age :
                                      pop_z_2015 * dict_ages['cf_age_fraction_' + age + '_grid']
                                      * dict_bm['i_' + outcome + '_' + cause + '_both_' + metric + '_' + age]
                                      * (1 - 1 / (np.exp(np.log(1 + (pm25 - lcc).clip(min=0)
-                                                               / dict_gemm['gemm_health_nonacc_alpha_' + age])
-                                                        / (1 + np.exp((dict_gemm['gemm_health_nonacc_mu_' + age]
+                                                               / dict_gemm['gemm_health_' + cause + '_alpha_' + age])
+                                                        / (1 + np.exp((dict_gemm['gemm_health_' + cause + '_mu_' + age]
                                                                        - (pm25 - lcc).clip(min=0))
-                                                                      / dict_gemm['gemm_health_nonacc_pi_' + age]))
-                                                        * dict_gemm['gemm_health_nonacc_theta_' + age]))) })
+                                                                      / dict_gemm['gemm_health_' + cause + '_pi_' + age]))
+                                                        * theta))) })
 
                 # mort - total
                 hia_5cod.update({ outcome + '_' + cause + '_' + metric + '_total' :
