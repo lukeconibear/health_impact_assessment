@@ -36,6 +36,12 @@ def load_bm_per_outcome(data_path, res, outcome, diseases):
 
 @njit
 def outcome_per_age(pop_z_2015, dict_ages, age, dict_bm, outcome, metric, pm25_clipped, dict_gemm):
+    if metric == 'mean':
+        theta = dict_gemm['gemm_health_nonacc_theta_' + age]
+    elif metric == 'lower':
+        theta = dict_gemm['gemm_health_nonacc_theta_' + age] - dict_gemm['gemm_health_nonacc_theta_error_' + age]
+    elif metric == 'upper':
+        theta = dict_gemm['gemm_health_nonacc_theta_' + age] + dict_gemm['gemm_health_nonacc_theta_error_' + age]
     return pop_z_2015 * dict_ages['cf_age_fraction_' + age + '_grid'] \
            * (dict_bm['i_' + outcome + '_ncd_both_' + metric + '_' + age] \
               + dict_bm['i_' + outcome + '_lri_both_' + metric + '_' + age]) \
@@ -44,7 +50,7 @@ def outcome_per_age(pop_z_2015, dict_ages, age, dict_bm, outcome, metric, pm25_c
                               / (1 + np.exp((dict_gemm['gemm_health_nonacc_mu_' + age] \
                                              - pm25_clipped) \
                                             / dict_gemm['gemm_health_nonacc_pi_' + age])) \
-                              * dict_gemm['gemm_health_nonacc_theta_' + age])))
+                              * theta)))
 
 def outcome_total(hia_ncdlri, outcome, metric):
     return sum([value for key, value in hia_ncdlri.items() if outcome + '_ncdlri_' + metric in key])
