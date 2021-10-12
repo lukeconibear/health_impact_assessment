@@ -48,6 +48,36 @@ dict_gemm.update(dict_gemm_2)
 # -----------------
 # --- functions ---
 # -----------------
+def shapefile_hia(hia, measure, clips, hia_path, lat, lon, regions):
+    df = pd.DataFrame({'name': regions})
+    hia_list = [key for key, value in hia.items() if measure in key and "total" in key and not "yl" in key]
+    hia_list.insert(0, "pop")
+    if (measure == "ncdlri") or (measure == "5cod"):
+        hia_list.insert(1, "pm25_popweighted")
+    elif measure == "6cod":
+        hia_list.insert(1, "apm25_popweighted")
+    elif measure == "copd":
+        hia_list.insert(1, "o3_popweighted")
+    # loop through variables and regions
+    for variable in hia_list:
+        df[variable] = pd.Series(np.nan)
+        for region in regions:
+            da = xr.DataArray(hia[variable], coords=[lat, lon], dims=["lat", "lon"])
+            clip = clips[region]
+            da_clip = da.where(clip==0, other=np.nan) # didn't convert the values in this version to be consistent
+            if variable == "pop":
+                df.loc[df.name == region, variable] = np.nansum(da_clip.values)
+            elif "popweighted" in variable:
+                df.loc[df.name == region, variable] = (
+                    np.nansum(da_clip.values) / df.loc[df.name == region, "pop"].values[0]
+                )
+            elif "rate" not in variable:
+                df.loc[df.name == region, variable] = np.nansum(da_clip.values)
+            else:
+                df.loc[df.name == region, variable] = np.nanmean(da_clip.values)
+    return df
+
+
 def calc_hia_gemm_5cod(pm25, pop_z_2015, dict_ages, dict_bm, dict_gemm):
     """ health impact assessment using the GEMM for 5-COD """
     """ inputs are exposure to annual-mean PM2.5 on a global grid at 0.25 degrees """
