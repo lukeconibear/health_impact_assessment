@@ -18,6 +18,7 @@
 - Application of cutting an array by a shapefile (`example_crop_array_to_shapefile.ipynb`).  
 - Plotting concentrations and calculating exposure over an area (`example_popweighted_exposure.ipynb`).
 - Health impact assessment for long-term PM2.5 and O3 exposures using GBD2017 exposure-outcome associations (`example_hia_gbd2017.py`).  
-- Health impact assessment for long-term PM2.5 exposure using the GEMM NCD+LRI exposure-outcome associations (`example_hia_gbd2017.py`).  
+- Health impact assessment for long-term PM2.5 exposure using the GEMM NCD+LRI exposure-outcome associations (`example_hia_gbd2017.py`, `health_impact_assessment_china.py`, `health_impact_assessment_global.py`).  
 - Cropping health impact assessments by shapefile (`example_hia_split_shapefile.py`).  
 - Health impact assessment for short-term PM2.5 exposure (`example_hia_shortterm.py`).  
+
