@@ -291,8 +291,8 @@ for sim in sims:
     gdf = gpd.read_file(data_path + 'gadm28_adm0.shp')
     country_list = list(gdf.ID_0.values)
 
-    df_country_hia_ncdlri = shapefile_hia(hia_ncdlri, 'ncdlri', 'country', data_path + 'gadm28_adm0.shp', results_path + '', lat, lon, region_list=country_list)
-    df_country_hia_5cod   = shapefile_hia(hia_5cod, '5cod', 'country', data_path + 'gadm28_adm0.shp', results_path + '', lat, lon, region_list=country_list)
+    df_country_hia_ncdlri = shapefile_hia(hia_ncdlri, 'ncdlri', 'country', data_path + 'gadm28_adm0.shp', results_path + '', lat, lon, regions=country_list)
+    df_country_hia_5cod   = shapefile_hia(hia_5cod, '5cod', 'country', data_path + 'gadm28_adm0.shp', results_path + '', lat, lon, regions=country_list)
 
     df_country_hia_ncdlri.to_csv(results_path + 'df_country_hia_ncdlri_' + sim + '.csv')
     df_country_hia_5cod.to_csv(results_path + 'df_country_hia_5cod_' + sim + '.csv')
