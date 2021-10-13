@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #$ -cwd -V
-#$ -l h_rt=01:00:00
+#$ -l h_rt=04:00:00
 #$ -pe ib 1
 #$ -l h_vmem=128G
 
